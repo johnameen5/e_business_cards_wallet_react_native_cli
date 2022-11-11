@@ -2,6 +2,7 @@ import React from 'react';
 import {Text, View} from 'react-native';
 import ExpandableFloatingAction from '../Widget/fab';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { readCardUsingNFC, readCardUsingQrCode } from "../Controller/FabController";
 
 export function CardsListPage() {
   return (
@@ -14,18 +15,18 @@ export function CardsListPage() {
         menuIcons={[
           {
             name: 'nfc',
-            icon: <Icon name="nfc" color={'#FFFFFF'} size={15} />,
+            icon: <Icon name="nfc" color={'#FFFFFF'} size={20} />,
             text: <Text />,
             callback: () => {
-              // readCardUsingNFC();
+              readCardUsingNFC();
             },
           },
           {
             name: 'qr-code',
-            icon: <Icon name="qr-code" color={'#FFFFFF'} size={15} />,
+            icon: <Icon name="qr-code" color={'#FFFFFF'} size={20} />,
             text: <Text />,
             callback: () => {
-              // readCardUsingQrCode();
+              readCardUsingQrCode();
             },
           },
         ]}
