@@ -2,7 +2,7 @@ import NfcManager, {NfcTech} from 'react-native-nfc-manager';
 import {
   NfcDisabledException,
   NfcNotSupportedException,
-} from '../Exception/NfcExceptions';
+} from '../Exceptions/NfcExceptions';
 
 NfcManager.start();
 
@@ -15,7 +15,8 @@ export async function readNfcTag() {
       await NfcManager.requestTechnology(NfcTech.Ndef);
 
       // the resolved tag object will contain `ndefMessage` property
-      resolve(await NfcManager.getTag());
+      let tag = await NfcManager.getTag();
+      resolve(tag);
     } catch (ex) {
       reject(ex);
     }
