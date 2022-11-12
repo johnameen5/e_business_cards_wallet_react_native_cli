@@ -18,7 +18,7 @@ function CardsList() {
         console.log(data);
         return data;
       }}
-      renderItem={item => <Text style={{color: "black"}}>{'HERE'}</Text>}
+      renderItem={item => <Text style={{color: 'black'}}>{'HERE'}</Text>}
     />
   );
 }
