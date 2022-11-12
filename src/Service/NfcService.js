@@ -1,10 +1,11 @@
-import NfcManager, {NfcTech} from 'react-native-nfc-manager';
+import NfcManager, { NfcTech } from "react-native-nfc-manager";
 import {
   NfcDisabledException,
   NfcNotSupportedException,
-} from '../Exception/NfcExceptions';
-import {Alert} from 'react-native';
-import Snackbar from 'react-native-snackbar';
+} from "../Exception/NfcExceptions";
+import { Alert } from "react-native";
+import Snackbar from "react-native-snackbar";
+import { dismissSnackbar, showInfoSnackbar } from "./SnackbarService";
 
 NfcManager.start();
 
@@ -12,17 +13,11 @@ export async function readNfcTag() {
   try {
     await checkNfc();
 
-    Snackbar.show({
-      text: 'Tap nfc card',
-      duration: Snackbar.LENGTH_INDEFINITE,
-      backgroundColor: 'yellow',
-      textColor: 'black',
-      action: {
-        text: 'Cancel',
-        textColor: 'red',
-        onPress: async () => {
-          await NfcManager.cancelTechnologyRequest();
-        },
+    showInfoSnackbar('Tap nfc card', Snackbar.LENGTH_INDEFINITE, {
+      text: 'Cancel',
+      textColor: 'red',
+      onPress: async () => {
+        await NfcManager.cancelTechnologyRequest();
       },
     });
 
@@ -31,14 +26,15 @@ export async function readNfcTag() {
 
     // the resolved tag object will contain `ndefMessage` property
     const tag = await NfcManager.getTag();
-    Snackbar.dismiss();
+    dismissSnackbar();
 
     return tag;
   } catch (ex) {
-    console.log(ex);
+    dismissSnackbar();
     handleNfcExceptions(ex);
     return null;
   } finally {
+    dismissSnackbar();
     await NfcManager.cancelTechnologyRequest();
   }
 }
@@ -57,10 +53,10 @@ async function checkNfc() {
 
 function handleNfcExceptions(exception) {
   if (exception instanceof NfcNotSupportedException) {
-    Alert.alert('Error', 'NFC is not supported', [{text: 'Ok'}]);
+    Alert.alert("Error", "NFC is not supported", [{ text: "Ok" }]);
   } else if (exception instanceof NfcDisabledException) {
-    Alert.alert('Error', 'NFC is disabled, please enable NFC and try again', [
-      {text: 'Ok'},
+    Alert.alert("Error", "NFC is disabled, please enable NFC and try again", [
+      { text: "Ok" },
     ]);
   }
 }
