@@ -8,3 +8,7 @@ export async function saveInStorage(key, value) {
 export async function getFromStorage(key) {
   return await AsyncStorage.getItem(`${APP_KEY}:${key}`);
 }
+
+export async function getAllItems() {
+  return await AsyncStorage.getItem();
+}

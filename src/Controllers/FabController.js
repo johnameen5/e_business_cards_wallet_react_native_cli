@@ -23,6 +23,7 @@ import {
 import NetInfo from '@react-native-community/netinfo';
 import {BusinessCard} from '../Models/BusinessCard';
 import {getFromStorage, saveInStorage} from '../Services/AsnycStorageService';
+import { BUSINESS_CARDS_KEY } from "../Values/Strings";
 
 let Url = require('url');
 
@@ -175,15 +176,15 @@ function handleBusinessCardExceptions(exception) {
 }
 
 async function saveBusinessCard(businessCard) {
-  let businessCards = JSON.parse(await getFromStorage('business_cards'));
+  let businessCards = JSON.parse(await getFromStorage(BUSINESS_CARDS_KEY));
   businessCards = businessCards ?? [];
   businessCards.push(businessCard);
   console.log(businessCards);
-  await saveInStorage('business_cards', JSON.stringify(businessCards));
+  await saveInStorage(BUSINESS_CARDS_KEY, JSON.stringify(businessCards));
 }
 
 async function checkIfBusinessCardExists(businessCard) {
-  let businessCards = JSON.parse(await getFromStorage('business_cards'));
+  let businessCards = JSON.parse(await getFromStorage(BUSINESS_CARDS_KEY));
   if (!businessCards) {
     return;
   }
