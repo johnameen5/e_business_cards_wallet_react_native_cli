@@ -1,42 +1,25 @@
-import NfcManager, { NfcTech } from "react-native-nfc-manager";
+import NfcManager, {NfcTech} from 'react-native-nfc-manager';
 import {
   NfcDisabledException,
   NfcNotSupportedException,
-} from "../Exception/NfcExceptions";
-import { Alert } from "react-native";
-import Snackbar from "react-native-snackbar";
-import { dismissSnackbar, showInfoSnackbar } from "./SnackbarService";
+} from '../Exception/NfcExceptions';
 
 NfcManager.start();
 
 export async function readNfcTag() {
-  try {
-    await checkNfc();
+  return new Promise(async (resolve, reject) => {
+    try {
+      await checkNfc();
 
-    showInfoSnackbar('Tap nfc card', Snackbar.LENGTH_INDEFINITE, {
-      text: 'Cancel',
-      textColor: 'red',
-      onPress: async () => {
-        await NfcManager.cancelTechnologyRequest();
-      },
-    });
+      // register for the NFC tag with NDEF in it
+      await NfcManager.requestTechnology(NfcTech.Ndef);
 
-    // register for the NFC tag with NDEF in it
-    await NfcManager.requestTechnology(NfcTech.Ndef);
-
-    // the resolved tag object will contain `ndefMessage` property
-    const tag = await NfcManager.getTag();
-    dismissSnackbar();
-
-    return tag;
-  } catch (ex) {
-    dismissSnackbar();
-    handleNfcExceptions(ex);
-    return null;
-  } finally {
-    dismissSnackbar();
-    await NfcManager.cancelTechnologyRequest();
-  }
+      // the resolved tag object will contain `ndefMessage` property
+      resolve(await NfcManager.getTag());
+    } catch (ex) {
+      reject(ex);
+    }
+  });
 }
 
 async function checkNfc() {
@@ -51,12 +34,6 @@ async function checkNfc() {
   }
 }
 
-function handleNfcExceptions(exception) {
-  if (exception instanceof NfcNotSupportedException) {
-    Alert.alert("Error", "NFC is not supported", [{ text: "Ok" }]);
-  } else if (exception instanceof NfcDisabledException) {
-    Alert.alert("Error", "NFC is disabled, please enable NFC and try again", [
-      { text: "Ok" },
-    ]);
-  }
+export async function stopReadingNfc() {
+  await NfcManager.cancelTechnologyRequest();
 }
