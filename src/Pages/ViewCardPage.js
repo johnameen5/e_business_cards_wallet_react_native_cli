@@ -6,16 +6,16 @@ export class ViewCardPage extends React.Component<{
   navigation: any,
 }> {
   state = {
-    uuid: null,
+    businessCard: null,
   };
 
   componentDidMount() {
     let {route} = this.props;
-    this.setState({uuid: route.params.uuid});
+    this.setState({businessCard: route.params.businessCard});
   }
 
   render() {
-    console.log(this.state.uuid);
+    console.log(this.state.businessCard);
     return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>View Cards Page</Text>

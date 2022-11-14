@@ -25,7 +25,7 @@ class CardsList extends Component {
             <CardListItem
               style={cardsStyle}
               onPress={() => {
-                this.props.navigation.navigate('Card', {uuid: item.uuid});
+                this.props.navigation.navigate('Card', {businessCard: item});
               }}
             />
           );
