@@ -45,6 +45,7 @@ export async function stopReadingNfc() {
 }
 
 export async function writeThroughHCE(url) {
+  await checkNfc();
   const tag = new NFCTagType4({
     type: NFCTagType4NDEFContentType.URL,
     content: url,
