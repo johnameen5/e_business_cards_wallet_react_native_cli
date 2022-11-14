@@ -1,10 +1,11 @@
-import {FlatList, ListViewBase, Text, View} from 'react-native';
+import {FlatList} from 'react-native';
 import {BUSINESS_CARDS_KEY} from '../../Values/Strings';
 import {connect} from 'react-redux';
 import {Component} from 'react';
 import {getFromStorage} from '../../Services/AsnycStorageService';
 import CardListItem from './Card';
 import {cardsListStyle, cardsStyle} from '../../Values/styles';
+import React from 'react';
 
 class CardsList extends Component {
   async componentDidMount() {
@@ -20,7 +21,14 @@ class CardsList extends Component {
         style={cardsListStyle}
         data={this.props.businessCards}
         renderItem={({item}) => {
-          return <CardListItem style={cardsStyle} />;
+          return (
+            <CardListItem
+              style={cardsStyle}
+              onPress={() => {
+                this.props.navigation.navigate('Card', {uuid: item.uuid});
+              }}
+            />
+          );
         }}
       />
     );
