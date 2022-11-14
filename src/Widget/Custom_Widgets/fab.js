@@ -6,8 +6,9 @@ import {
 } from '../../Controllers/FabController';
 import ExpandableFloatingAction from '../fab';
 import React from 'react';
+import {connect} from 'react-redux';
 
-const CustomExpandableFloatingAction = () => {
+const CustomExpandableFloatingAction = props => {
   return (
     <ExpandableFloatingAction
       mainColor="#0096FF"
@@ -20,7 +21,7 @@ const CustomExpandableFloatingAction = () => {
           icon: <Icon name="nfc" color={'#FFFFFF'} size={20} />,
           text: <Text />,
           callback: async () => {
-            await readCardUsingNFC();
+            await readCardUsingNFC(props.setBusinessCards);
           },
         },
         {
@@ -36,4 +37,20 @@ const CustomExpandableFloatingAction = () => {
   );
 };
 
-export default CustomExpandableFloatingAction;
+function mapStateToProps(state) {
+  return {
+    businessCards: state.businessCards,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setBusinessCards: businessCards =>
+      dispatch({type: 'SET_BUSINESS_CARDS', businessCards: businessCards}),
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(CustomExpandableFloatingAction);

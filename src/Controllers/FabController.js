@@ -23,11 +23,11 @@ import {
 import NetInfo from '@react-native-community/netinfo';
 import {BusinessCard} from '../Models/BusinessCard';
 import {getFromStorage, saveInStorage} from '../Services/AsnycStorageService';
-import { BUSINESS_CARDS_KEY } from "../Values/Strings";
+import {BUSINESS_CARDS_KEY} from '../Values/Strings';
 
 let Url = require('url');
 
-export async function readCardUsingNFC() {
+export async function readCardUsingNFC(callback) {
   let networkState = await NetInfo.fetch();
 
   if (!networkState.isConnected) {
@@ -36,8 +36,9 @@ export async function readCardUsingNFC() {
   }
 
   readNfcTag()
-    .then(tag => {
-      onTagRead(tag.ndefMessage);
+    .then(async tag => {
+      await onTagRead(tag.ndefMessage);
+      callback(JSON.parse(await getFromStorage(BUSINESS_CARDS_KEY)));
     })
     .catch(exception => {
       console.log(exception.message);
