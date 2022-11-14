@@ -1,5 +1,10 @@
 import NfcManager, {NfcTech} from 'react-native-nfc-manager';
 import {
+  HCESession,
+  NFCTagType4NDEFContentType,
+  NFCTagType4,
+} from 'react-native-hce';
+import {
   NfcDisabledException,
   NfcNotSupportedException,
 } from '../Exceptions/NfcExceptions';
@@ -37,4 +42,21 @@ async function checkNfc() {
 
 export async function stopReadingNfc() {
   await NfcManager.cancelTechnologyRequest();
+}
+
+export async function writeThroughHCE(url) {
+  const tag = new NFCTagType4({
+    type: NFCTagType4NDEFContentType.URL,
+    content: url,
+    writable: false,
+  });
+  let session = await HCESession.getInstance();
+  await session.setApplication(tag);
+  await session.setEnabled(true);
+
+  return session;
+}
+
+export async function stopWritingThroughHCE(session) {
+  await session.setEnabled(false);
 }
