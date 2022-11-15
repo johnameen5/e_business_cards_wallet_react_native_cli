@@ -91,9 +91,21 @@ async function onTagRead(records) {
     checkReadNdefRecords(records);
     let url = Ndef.uri.decodePayload(records[0].payload);
 
-    let uuid = await isUrlValid(url);
+    let businessCardJson = await isUrlValid(url);
 
-    let businessCard = new BusinessCard(url, uuid);
+    url = businessCardJson.url;
+    let uuid = businessCardJson.uuid;
+    let contactQrCode = businessCardJson.contactQrCode;
+    let urlQrCode = businessCardJson.urlQrCode;
+    let cardBackground = businessCardJson.cardBackground;
+
+    let businessCard = new BusinessCard(
+      url,
+      uuid,
+      contactQrCode,
+      urlQrCode,
+      cardBackground,
+    );
 
     await checkIfBusinessCardExists(businessCard);
 
@@ -123,9 +135,9 @@ async function isUrlValid(urlString) {
 
   isUuidValid(uuid);
 
-  await isCardValid(url, uuid);
+  let businessCard = await isCardValid(url, uuid);
 
-  return uuid;
+  return businessCard;
 }
 
 function isUuidValid(uuid) {
@@ -156,6 +168,8 @@ async function isCardValid(cardUrl, uuid) {
   if (response.status !== 200 || !response.data.success) {
     throw new CardInvalidException();
   }
+
+  return response.data.businessCard;
 }
 
 async function isDomainValid(domain) {
@@ -180,7 +194,6 @@ async function saveBusinessCard(businessCard) {
   let businessCards = JSON.parse(await getFromStorage(BUSINESS_CARDS_KEY));
   businessCards = businessCards ?? [];
   businessCards.push(businessCard);
-  console.log(businessCards);
   await saveInStorage(BUSINESS_CARDS_KEY, JSON.stringify(businessCards));
 }
 

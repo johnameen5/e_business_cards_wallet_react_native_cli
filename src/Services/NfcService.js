@@ -46,9 +46,11 @@ export async function stopReadingNfc() {
 
 export async function writeThroughHCE(url) {
   await checkNfc();
-  NfcManager.requestTechnology(NfcTech.IsoDep, {isReaderModeEnabled: false})
+  NfcManager.registerTagEvent({
+    isReaderModeEnabled: false,
+  })
     .then()
-    .catch(e => {});
+    .catch();
 
   const tag = new NFCTagType4({
     type: NFCTagType4NDEFContentType.URL,

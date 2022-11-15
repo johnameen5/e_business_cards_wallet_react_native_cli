@@ -23,7 +23,6 @@ export class ViewCardPage extends React.Component<{
   }
 
   render() {
-    console.log(this.state.businessCard);
     return (
       <View style={{flex: 1, flexDirection: 'column'}}>
         <CardListItem style={cardsStyle} />
