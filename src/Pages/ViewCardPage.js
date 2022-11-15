@@ -1,12 +1,28 @@
-import {Alert, Button, View} from 'react-native';
+import {Alert, Image, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {cardsStyle} from '../Values/styles';
+import {
+  cardsStyle,
+  viewCardsActionButtonsStyle,
+  viewCardsActionButtonsTextStyle,
+  viewCardsBottomSheetBackDropStyle,
+  viewCardsBottomSheetImageStyle,
+  viewCardsBottomSheetStyle,
+} from '../Values/styles';
+
+import {BottomSheet} from '@rneui/base';
+
 import CardListItem from '../Widget/Custom_Widgets/Card';
 import {stopWritingThroughHCE, writeThroughHCE} from '../Services/NfcService';
 import {
   NfcDisabledException,
   NfcNotSupportedException,
 } from '../Exceptions/NfcExceptions';
+import {Platform} from 'react-native';
+
+const QR_CODE_TYPES = {
+  ContactQrCode: 'ContactQrCode',
+  UrlQrCode: 'UrlQrCode',
+};
 
 export class ViewCardPage extends React.Component<{
   route: any,
@@ -15,6 +31,8 @@ export class ViewCardPage extends React.Component<{
   state = {
     businessCard: null,
     session: null,
+    bottomSheetVisible: false,
+    visibleQrCode: null,
   };
 
   componentDidMount() {
@@ -26,18 +44,88 @@ export class ViewCardPage extends React.Component<{
     return (
       <View style={{flex: 1, flexDirection: 'column'}}>
         <CardListItem style={cardsStyle} />
-        <View style={{flex: 2}} />
-        <View style={{padding: 20}}>
-          <Button
-            onPress={async () => {
-              await this.writeThroughNfc();
-            }}
-            title={'Share card through NFC'}
-            width
-          />
+        <View style={{flex: 2, marginTop: 30}}>
+          {this.getNfcActionButton()}
+          {this.getContactQrActionButton()}
+          {this.getUrlQrActionButton()}
         </View>
+        <BottomSheet
+          isVisible={this.state.bottomSheetVisible}
+          containerStyle={viewCardsBottomSheetStyle}
+          backdropStyle={viewCardsBottomSheetBackDropStyle}
+          onBackdropPress={() => this.toggleBottomSheet()}>
+          <View style={{flexDirection: 'column', justifyContent: 'center'}}>
+            <Image
+              source={{uri: this.state.visibleQrCode}}
+              style={viewCardsBottomSheetImageStyle}
+            />
+            <TouchableOpacity
+              style={viewCardsActionButtonsStyle}
+              onPress={() => {
+                this.toggleBottomSheet();
+              }}>
+              <Text style={viewCardsActionButtonsTextStyle}>{'Done'}</Text>
+            </TouchableOpacity>
+          </View>
+        </BottomSheet>
       </View>
     );
+  }
+
+  getNfcActionButton() {
+    return Platform.OS !== 'android' ? null : (
+      <TouchableOpacity
+        style={viewCardsActionButtonsStyle}
+        onPress={async () => {
+          await this.writeThroughNfc();
+        }}>
+        <Text style={viewCardsActionButtonsTextStyle}>
+          {'Share card through NFC'}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+
+  getContactQrActionButton() {
+    return (
+      <TouchableOpacity
+        style={viewCardsActionButtonsStyle}
+        onPress={() => {
+          this.handleQrCodeActionClicked(QR_CODE_TYPES.ContactQrCode);
+        }}>
+        <Text style={viewCardsActionButtonsTextStyle}>{'Contact QR Code'}</Text>
+      </TouchableOpacity>
+    );
+  }
+
+  getUrlQrActionButton() {
+    return (
+      <TouchableOpacity
+        style={viewCardsActionButtonsStyle}
+        onPress={() => {
+          this.handleQrCodeActionClicked(QR_CODE_TYPES.UrlQrCode);
+        }}>
+        <Text style={viewCardsActionButtonsTextStyle}>{'URL QR Code'}</Text>
+      </TouchableOpacity>
+    );
+  }
+
+  handleQrCodeActionClicked(type) {
+    let businessCard = this.state.businessCard;
+    let isVisible = this.state.bottomSheetVisible;
+    let qrCode = null;
+
+    if (type === QR_CODE_TYPES.ContactQrCode) {
+      qrCode = businessCard.contactQrCode;
+    } else if (type === QR_CODE_TYPES.UrlQrCode) {
+      qrCode = businessCard.urlQrCode;
+    }
+
+    this.setState({
+      ...this.state,
+      bottomSheetVisible: !isVisible,
+      visibleQrCode: qrCode,
+    });
   }
 
   async writeThroughNfc() {
@@ -68,5 +156,13 @@ export class ViewCardPage extends React.Component<{
         {text: 'Ok'},
       ]);
     }
+  }
+
+  toggleBottomSheet() {
+    let bottomSheetVisible = !this.state.bottomSheetVisible;
+    this.setState({
+      ...this.state,
+      bottomSheetVisible: bottomSheetVisible,
+    });
   }
 }
