@@ -33,7 +33,7 @@ export class ViewCardPage extends React.Component<{
             onPress={async () => {
               await this.writeThroughNfc();
             }}
-            title={'Send card through NFC'}
+            title={'Share card through NFC'}
             width
           />
         </View>

@@ -1,4 +1,3 @@
-import {FlatList} from 'react-native';
 import {BUSINESS_CARDS_KEY} from '../../Values/Strings';
 import {connect} from 'react-redux';
 import {Component} from 'react';
@@ -6,6 +5,7 @@ import {getFromStorage} from '../../Services/AsnycStorageService';
 import CardListItem from './Card';
 import {cardsListStyle, cardsStyle} from '../../Values/styles';
 import React from 'react';
+import {FlatList} from 'react-native';
 
 class CardsList extends Component {
   async componentDidMount() {

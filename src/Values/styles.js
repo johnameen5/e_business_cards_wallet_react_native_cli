@@ -2,8 +2,8 @@ export const cardsStyle = {
   height: 170,
   elevation: 5,
   marginBottom: 10,
-  marginRight: 20,
-  marginLeft: 20,
+  marginRight: 30,
+  marginLeft: 30,
   borderRadius: 10,
 };
 
@@ -13,4 +13,5 @@ export const cardsListStyle = {
   left: 0,
   height: '100%',
   width: '100%',
+  marginBottom: 100,
 };
